@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Camera } from "lucide-react";
+import { Camera, Moon, Sun } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -33,6 +33,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Switch } from "@/components/ui/switch";
 
 
 export default function Home() {
@@ -127,8 +128,27 @@ export default function Home() {
     "4997 CSN ZONA LESTE, RJ", "3767 DIGITAL SUL FLUMINENSE, RJ"
   ];
   const [isBarcodeApiSupported, setIsBarcodeApiSupported] = useState<boolean>(true);
-
   const [currentDate, setCurrentDate] = useState('');
+  const [theme, setTheme] = useState("light");
+
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme");
+    const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    if (savedTheme) {
+        setTheme(savedTheme);
+    } else {
+        setTheme(prefersDark ? "dark" : "light");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (theme === "dark") {
+        document.documentElement.classList.add("dark");
+    } else {
+        document.documentElement.classList.remove("dark");
+    }
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
   useEffect(() => {
     setCurrentDate(new Date().toLocaleDateString('pt-BR'));
@@ -292,18 +312,32 @@ export default function Home() {
   
   const totalGeral = categoryTotals.A + categoryTotals.B + categoryTotals.C;
 
+  const handleThemeChange = () => {
+    setTheme(theme === "light" ? "dark" : "light");
+  };
 
   return (
     <>
       <main className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4 gap-4">
         <Card className="w-full max-w-md shadow-lg">
-          <CardHeader>
-            <CardTitle className="text-2xl font-bold tracking-tight">
-              CountSKP
-            </CardTitle>
-            <CardDescription>
-              Insira o código inicial e final manually ou usando a câmera.
-            </CardDescription>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <div>
+                <CardTitle className="text-2xl font-bold tracking-tight">
+                CountSKP
+                </CardTitle>
+                <CardDescription>
+                Insira o código inicial e final manually ou usando a câmera.
+                </CardDescription>
+            </div>
+            <div className="flex items-center gap-2">
+                <Sun className="h-5 w-5" />
+                <Switch
+                    checked={theme === "dark"}
+                    onCheckedChange={handleThemeChange}
+                    aria-label="Toggle dark mode"
+                />
+                <Moon className="h-5 w-5" />
+            </div>
           </CardHeader>
           <CardContent className="grid gap-6">
             <div className="grid gap-2">
@@ -521,5 +555,7 @@ export default function Home() {
     </>
   );
 }
+
+    
 
     
