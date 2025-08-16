@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
-  title: 'Code Reader',
+  title: 'CountSKP',
   description: 'Scan or enter barcodes easily.',
 };
 

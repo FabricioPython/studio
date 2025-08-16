@@ -261,7 +261,7 @@ export default function Home() {
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold tracking-tight">
-              Leitor de Código
+              CountSKP
             </CardTitle>
             <CardDescription>
               Insira o código inicial e final manually ou usando a câmera.
