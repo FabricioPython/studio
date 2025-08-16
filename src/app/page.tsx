@@ -161,6 +161,9 @@ export default function Home() {
     })
 
   }
+  
+  const totalGeral = categoryTotals.A + categoryTotals.B + categoryTotals.C;
+
 
   return (
     <>
@@ -263,20 +266,31 @@ export default function Home() {
               </div>
             )}
              <Separator />
-            <div className="space-y-2">
-                <h3 className="font-medium">Totais por Categoria</h3>
-                <div className="flex justify-between rounded-lg bg-muted p-3">
-                    <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Categoria A</p>
-                        <p className="text-2xl font-bold">{categoryTotals.A}</p>
+            <div className="space-y-4">
+                <div className="space-y-2">
+                    <h3 className="font-medium">Totais por Categoria</h3>
+                    <div className="flex justify-between rounded-lg bg-muted p-3">
+                        <div className="text-center">
+                            <p className="text-sm text-muted-foreground">Categoria A</p>
+                            <p className="text-2xl font-bold">{categoryTotals.A}</p>
+                        </div>
+                         <div className="text-center">
+                            <p className="text-sm text-muted-foreground">Categoria B</p>
+                            <p className="text-2xl font-bold">{categoryTotals.B}</p>
+                        </div>
+                         <div className="text-center">
+                            <p className="text-sm text-muted-foreground">Categoria C</p>
+                            <p className="text-2xl font-bold">{categoryTotals.C}</p>
+                        </div>
                     </div>
-                     <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Categoria B</p>
-                        <p className="text-2xl font-bold">{categoryTotals.B}</p>
-                    </div>
-                     <div className="text-center">
-                        <p className="text-sm text-muted-foreground">Categoria C</p>
-                        <p className="text-2xl font-bold">{categoryTotals.C}</p>
+                </div>
+                 <div className="space-y-2">
+                    <h3 className="font-medium">Total Geral</h3>
+                    <div className="flex justify-center rounded-lg bg-primary/10 p-4">
+                        <div className="text-center">
+                            <p className="text-sm text-primary/80">Soma de todas as categorias</p>
+                            <p className="text-4xl font-bold text-primary">{totalGeral}</p>
+                        </div>
                     </div>
                 </div>
             </div>
