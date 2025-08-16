@@ -85,9 +85,29 @@ export default function Home() {
   };
 
   const handleProcess = () => {
-    // This is a placeholder for processing the codes
-    console.log("Processing codes:", { initialCode, finalCode });
-    alert(`Processando os códigos: ${initialCode} e ${finalCode}`);
+    const initial = parseInt(initialCode, 10);
+    const final = parseInt(finalCode, 10);
+
+    if (isNaN(initial) || isNaN(final)) {
+      toast({
+        variant: "destructive",
+        title: "Códigos Inválidos",
+        description: "Por favor, insira o código inicial e final.",
+      });
+      return;
+    }
+
+    if (final < initial) {
+      toast({
+        variant: "destructive",
+        title: "Intervalo Inválido",
+        description: "O código final deve ser maior ou igual ao código inicial.",
+      });
+      return;
+    }
+
+    const range = final - initial + 1;
+    alert(`O intervalo contém ${range} elementos distintos.`);
   };
 
   const handleCapture = () => {
