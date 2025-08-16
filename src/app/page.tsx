@@ -285,7 +285,7 @@ export default function Home() {
                     </div>
                 </div>
                  <div className="space-y-2">
-                    <h3 className="font-medium">Total Geral</h3>
+                    <h3 className="font-medium">relatorio de agencia</h3>
                     <div className="flex justify-center rounded-lg bg-primary/10 p-4">
                         <div className="text-center">
                             <p className="text-sm text-primary/80">Soma de todas as categorias</p>
