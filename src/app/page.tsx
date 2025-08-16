@@ -25,6 +25,13 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 
 export default function Home() {
@@ -41,6 +48,7 @@ export default function Home() {
   const { toast } = useToast();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [categoryTotals, setCategoryTotals] = useState({ A: 0, B: 0, C: 0 });
+  const [selectedAgency, setSelectedAgency] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -293,6 +301,19 @@ export default function Home() {
                         </div>
                     </div>
                 </div>
+                 <div className="grid gap-2">
+                    <Label htmlFor="agency-select">Agencia</Label>
+                    <Select onValueChange={setSelectedAgency} value={selectedAgency || ""}>
+                        <SelectTrigger id="agency-select">
+                            <SelectValue placeholder="Selecione a agência" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="agency1">Agência 1</SelectItem>
+                            <SelectItem value="agency2">Agência 2</SelectItem>
+                            <SelectItem value="agency3">Agência 3</SelectItem>
+                        </SelectContent>
+                    </Select>
+                 </div>
             </div>
           </CardContent>
           <CardFooter>
