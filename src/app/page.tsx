@@ -126,6 +126,7 @@ export default function Home() {
     "4044 TRT 1A REGIAO RIO DE JANEIRO, RJ", "2028 VOLUNTARIOS DA PATRIA, RJ", "4971 CSN PATIO SOM, RJ", 
     "4997 CSN ZONA LESTE, RJ", "3767 DIGITAL SUL FLUMINENSE, RJ"
   ];
+  const [isBarcodeApiSupported, setIsBarcodeApiSupported] = useState<boolean>(true);
 
   const [currentDate, setCurrentDate] = useState('');
 
@@ -134,6 +135,8 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
+    let detectionInterval: NodeJS.Timeout;
+    
     if (isCameraOpen) {
       const getCameraPermission = async () => {
         try {
@@ -145,6 +148,29 @@ export default function Home() {
 
           if (videoRef.current) {
             videoRef.current.srcObject = stream;
+          }
+           if ('BarcodeDetector' in window) {
+            const barcodeDetector = new (window as any).BarcodeDetector({
+              formats: ['code_128', 'code_39', 'ean_13', 'ean_8', 'upc_a', 'upc_e', 'qr_code'],
+            });
+
+            detectionInterval = setInterval(async () => {
+              if (videoRef.current && videoRef.current.readyState === 4) {
+                try {
+                  const barcodes = await barcodeDetector.detect(videoRef.current);
+                  if (barcodes.length > 0) {
+                    const scannedCode = barcodes[0].rawValue;
+                    handleCapture(scannedCode);
+                    clearInterval(detectionInterval);
+                  }
+                } catch (error) {
+                  console.error('Barcode detection failed:', error);
+                  // We can toast an error here if needed.
+                }
+              }
+            }, 500);
+          } else {
+             setIsBarcodeApiSupported(false);
           }
         } catch (error) {
           console.error("Error accessing camera:", error);
@@ -167,10 +193,13 @@ export default function Home() {
         streamRef.current = null;
       }
     }
-    // Cleanup function to stop camera on component unmount
+    // Cleanup function to stop camera and interval on component unmount or dialog close
     return () => {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach((track) => track.stop());
+      }
+      if (detectionInterval) {
+        clearInterval(detectionInterval);
       }
     };
   }, [isCameraOpen, toast]);
@@ -210,9 +239,7 @@ export default function Home() {
     setSelectedCategory(null);
   };
 
-  const handleCapture = () => {
-    // Placeholder for barcode scanning logic
-    const scannedCode = "1234567890"; // This would be replaced by actual barcode data
+  const handleCapture = (scannedCode: string) => {
     if (scanningFor === "initial") {
       setInitialCode(scannedCode);
     } else if (scanningFor === "final") {
@@ -459,6 +486,14 @@ export default function Home() {
                 </AlertDescription>
               </Alert>
             )}
+            {!isBarcodeApiSupported && (
+               <Alert variant="destructive">
+                <AlertTitle>Barcode Scanning Not Supported</AlertTitle>
+                <AlertDescription>
+                  Your browser does not support barcode scanning. Please type the code manually.
+                </AlertDescription>
+              </Alert>
+            )}
              <video ref={videoRef} className="w-full aspect-video rounded-md bg-muted" autoPlay muted playsInline/>
           </div>
           <DialogFooter>
@@ -467,15 +502,11 @@ export default function Home() {
                 Cancel
               </Button>
             </DialogClose>
-            <Button type="button" onClick={handleCapture} disabled={!hasCameraPermission}>
-              Capture
-            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
     </>
   );
 }
-
 
     
