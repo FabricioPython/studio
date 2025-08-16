@@ -23,6 +23,8 @@ import {
 } from "@/components/ui/dialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Separator } from "@/components/ui/separator";
 
 
 export default function Home() {
@@ -37,6 +39,9 @@ export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const { toast } = useToast();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [categoryTotals, setCategoryTotals] = useState({ A: 0, B: 0, C: 0 });
+
 
   useEffect(() => {
     if (isCameraOpen) {
@@ -112,6 +117,7 @@ export default function Home() {
 
     const range = final - initial + 1;
     setRangeResult(range);
+    setSelectedCategory(null);
   };
 
   const handleCapture = () => {
@@ -128,6 +134,33 @@ export default function Home() {
       description: `Code ${scannedCode} captured for ${scanningFor} field.`,
     });
   };
+
+  const handleSaveCount = () => {
+    if (!selectedCategory || rangeResult === null) {
+      toast({
+        variant: "destructive",
+        title: "Seleção Necessária",
+        description: "Por favor, selecione uma categoria (A, B, ou C).",
+      });
+      return;
+    }
+
+    setCategoryTotals(prevTotals => ({
+        ...prevTotals,
+        [selectedCategory]: prevTotals[selectedCategory as keyof typeof prevTotals] + rangeResult
+    }));
+
+    setInitialCode("");
+    setFinalCode("");
+    setRangeResult(null);
+    setSelectedCategory(null);
+
+    toast({
+        title: "Contagem Salva",
+        description: `${rangeResult} SKPs adicionados à categoria ${selectedCategory}.`,
+    })
+
+  }
 
   return (
     <>
@@ -192,17 +225,64 @@ export default function Home() {
                 </Button>
               </div>
             </div>
+            {rangeResult === null && (
+                 <Button className="w-full" onClick={handleProcess}>
+                    Processar Códigos
+                </Button>
+            )}
             {rangeResult !== null && (
-              <div className="p-4 bg-muted rounded-lg text-center">
-                 <p className="text-sm text-muted-foreground">SKPs na sequência</p>
-                 <p className="text-3xl font-bold tracking-tight">{rangeResult}</p>
+              <div className="space-y-4">
+                <div className="p-4 bg-muted rounded-lg text-center">
+                    <p className="text-sm text-muted-foreground">SKPs na sequência</p>
+                    <p className="text-3xl font-bold tracking-tight">{rangeResult}</p>
+                </div>
+                <div className="grid gap-2">
+                    <Label>Selecione a Categoria</Label>
+                    <RadioGroup 
+                        className="flex items-center gap-4" 
+                        value={selectedCategory || ""}
+                        onValueChange={setSelectedCategory}
+                    >
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="A" id="cat-a" />
+                            <Label htmlFor="cat-a">A</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="B" id="cat-b" />
+                            <Label htmlFor="cat-b">B</Label>
+                        </div>
+                        <div className="flex items-center space-x-2">
+                            <RadioGroupItem value="C" id="cat-c" />
+                            <Label htmlFor="cat-c">C</Label>
+                        </div>
+                    </RadioGroup>
+                </div>
+                <Button className="w-full" onClick={handleSaveCount}>
+                    Salvar Contagem
+                </Button>
               </div>
             )}
+             <Separator />
+            <div className="space-y-2">
+                <h3 className="font-medium">Totais por Categoria</h3>
+                <div className="flex justify-between rounded-lg bg-muted p-3">
+                    <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Categoria A</p>
+                        <p className="text-2xl font-bold">{categoryTotals.A}</p>
+                    </div>
+                     <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Categoria B</p>
+                        <p className="text-2xl font-bold">{categoryTotals.B}</p>
+                    </div>
+                     <div className="text-center">
+                        <p className="text-sm text-muted-foreground">Categoria C</p>
+                        <p className="text-2xl font-bold">{categoryTotals.C}</p>
+                    </div>
+                </div>
+            </div>
           </CardContent>
           <CardFooter>
-            <Button className="w-full" onClick={handleProcess}>
-              Processar Códigos
-            </Button>
+           
           </CardFooter>
         </Card>
       </main>
