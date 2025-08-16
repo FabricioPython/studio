@@ -28,6 +28,7 @@ import { useToast } from "@/hooks/use-toast";
 export default function Home() {
   const [initialCode, setInitialCode] = useState("");
   const [finalCode, setFinalCode] = useState("");
+  const [rangeResult, setRangeResult] = useState<number | null>(null);
   const [isCameraOpen, setIsCameraOpen] = useState(false);
   const [scanningFor, setScanningFor] = useState<"initial" | "final" | null>(
     null
@@ -82,6 +83,7 @@ export default function Home() {
   const handleScan = (field: "initial" | "final") => {
     setScanningFor(field);
     setIsCameraOpen(true);
+    setRangeResult(null);
   };
 
   const handleProcess = () => {
@@ -94,6 +96,7 @@ export default function Home() {
         title: "Códigos Inválidos",
         description: "Por favor, insira o código inicial e final.",
       });
+      setRangeResult(null);
       return;
     }
 
@@ -103,11 +106,12 @@ export default function Home() {
         title: "Intervalo Inválido",
         description: "O código final deve ser maior ou igual ao código inicial.",
       });
+      setRangeResult(null);
       return;
     }
 
     const range = final - initial + 1;
-    alert(`O intervalo contém ${range} elementos distintos.`);
+    setRangeResult(range);
   };
 
   const handleCapture = () => {
@@ -148,7 +152,10 @@ export default function Home() {
                   placeholder="Digite ou escaneie o código"
                   className="flex-1"
                   value={initialCode}
-                  onChange={(e) => setInitialCode(e.target.value)}
+                  onChange={(e) => {
+                    setInitialCode(e.target.value)
+                    setRangeResult(null);
+                  }}
                 />
                 <Button
                   variant="outline"
@@ -170,7 +177,10 @@ export default function Home() {
                   placeholder="Digite ou escaneie o código"
                   className="flex-1"
                   value={finalCode}
-                  onChange={(e) => setFinalCode(e.target.value)}
+                  onChange={(e) => {
+                    setFinalCode(e.target.value)
+                    setRangeResult(null);
+                  }}
                 />
                 <Button
                   variant="outline"
@@ -182,6 +192,12 @@ export default function Home() {
                 </Button>
               </div>
             </div>
+            {rangeResult !== null && (
+              <div className="p-4 bg-muted rounded-lg text-center">
+                 <p className="text-sm text-muted-foreground">SKPs na sequência</p>
+                 <p className="text-3xl font-bold tracking-tight">{rangeResult}</p>
+              </div>
+            )}
           </CardContent>
           <CardFooter>
             <Button className="w-full" onClick={handleProcess}>
