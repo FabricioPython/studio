@@ -174,7 +174,7 @@ export default function Home() {
               Leitor de Código
             </CardTitle>
             <CardDescription>
-              Insira o código inicial e final manualmente ou usando a câmera.
+              Insira o código inicial e final manually ou usando a câmera.
             </CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6">
@@ -285,7 +285,7 @@ export default function Home() {
                     </div>
                 </div>
                  <div className="space-y-2">
-                    <h3 className="font-medium">relatorio de agencia</h3>
+                    <h3 className="font-medium">Relatório</h3>
                     <div className="flex justify-center rounded-lg bg-primary/10 p-4">
                         <div className="text-center">
                             <p className="text-sm text-primary/80">Soma de todas as categorias</p>
