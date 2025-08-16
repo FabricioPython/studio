@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from "react";
@@ -126,6 +127,12 @@ export default function Home() {
     "4997 CSN ZONA LESTE, RJ", "3767 DIGITAL SUL FLUMINENSE, RJ"
   ];
 
+  const [currentDate, setCurrentDate] = useState('');
+
+  useEffect(() => {
+    setCurrentDate(new Date().toLocaleDateString('pt-BR'));
+  }, []);
+
   useEffect(() => {
     if (isCameraOpen) {
       const getCameraPermission = async () => {
@@ -250,7 +257,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="flex min-h-screen w-full items-center justify-center bg-background p-4">
+      <main className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4 gap-4">
         <Card className="w-full max-w-md shadow-lg">
           <CardHeader>
             <CardTitle className="text-2xl font-bold tracking-tight">
@@ -395,6 +402,47 @@ export default function Home() {
            
           </CardFooter>
         </Card>
+
+        {selectedAgency && (
+          <Card className="w-full max-w-md shadow-lg">
+            <CardHeader>
+              <CardTitle>Relatório Final</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Agência</p>
+                <p className="font-semibold">{selectedAgency}</p>
+              </div>
+              <div>
+                <p className="text-sm font-medium text-muted-foreground">Data</p>
+                <p className="font-semibold">{currentDate}</p>
+              </div>
+              <Separator />
+              <div>
+                 <p className="text-sm font-medium text-muted-foreground">Quantidades por Categoria</p>
+                 <div className="flex justify-between mt-2">
+                    <div className="text-center">
+                        <p className="font-bold text-lg">A</p>
+                        <p>{categoryTotals.A}</p>
+                    </div>
+                     <div className="text-center">
+                        <p className="font-bold text-lg">B</p>
+                        <p>{categoryTotals.B}</p>
+                    </div>
+                     <div className="text-center">
+                        <p className="font-bold text-lg">C</p>
+                        <p>{categoryTotals.C}</p>
+                    </div>
+                 </div>
+              </div>
+              <Separator />
+              <div className="flex justify-between items-center">
+                <p className="text-lg font-bold">Somatório Geral</p>
+                <p className="text-2xl font-bold text-primary">{totalGeral}</p>
+              </div>
+            </CardContent>
+          </Card>
+        )}
       </main>
 
       <Dialog open={isCameraOpen} onOpenChange={setIsCameraOpen}>
@@ -428,3 +476,6 @@ export default function Home() {
     </>
   );
 }
+
+
+    
