@@ -107,7 +107,7 @@ export default function Home() {
     "2973 SHOPPING GRANDE RIO", "4149 VILAR DOS TELES", "1243 SAO PEDRO DA ALDEIA", "2072 SAPUCAIA", 
     "1332 SAQUAREMA", "3071 SEROPEDICA", "4872 TANGUA", "4650 AVENIDA FELICIANO SODRE", "193 TERESOPOLIS", 
     "195 TRES RIOS", "1800 VILA", "945 VALENCA", "196 VASSOURAS", "4375 ATERRADO", 
-    "2026 BAIRRO SANTO AGOSTINHO", "1504 CIDADE DO ACO", "4018 RETIRO", "197 VOLTA REDONDA", 
+    "2026 BAIRRO SANTO AGOSTINHO", "1504 CIDADE DO ACO", "4018 RETiro", "197 VOLTA REDONDA", 
     "4377 COSTA VERDE, RJ", "7198 TRT CABO FRIO, RJ", "4273 AG EMPRESARIAL NORTE FLUMINENSE", 
     "7517 AGRO CAMPOS DOS GOYTACAZES, RJ", "5489 DIGITAL CAMPOS, RJ", "3773 DIGITAL NORTE FLUMINENSE, RJ", 
     "4870 CASIMIRO DE ABREU, RJ", "4264 AG EMPRESARIAL RIO METROPOLITANA", "2781 DIGITAL BAIXADA FLUMINENSE, RJ", 
@@ -326,7 +326,7 @@ export default function Home() {
                 CountSKP
                 </CardTitle>
                 <CardDescription>
-                Insira o código inicial e final manually ou usando a câmera.
+                Insira o código inicial e final manual ou usando a câmera.
                 </CardDescription>
             </div>
             <div className="flex items-center gap-2">
@@ -555,7 +555,3 @@ export default function Home() {
     </>
   );
 }
-
-    
-
-    
