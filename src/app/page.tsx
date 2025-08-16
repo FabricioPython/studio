@@ -211,6 +211,17 @@ export default function Home() {
   };
 
   const handleProcess = () => {
+    const isNumeric = /^\d{10}$/;
+    if (!isNumeric.test(initialCode) || !isNumeric.test(finalCode)) {
+      toast({
+        variant: "destructive",
+        title: "Códigos Inválidos",
+        description: "O código inicial e final devem conter exatamente 10 dígitos numéricos.",
+      });
+      setRangeResult(null);
+      return;
+    }
+
     const initial = parseInt(initialCode, 10);
     const final = parseInt(finalCode, 10);
 
@@ -309,6 +320,7 @@ export default function Home() {
                     setInitialCode(e.target.value)
                     setRangeResult(null);
                   }}
+                  maxLength={10}
                 />
                 <Button
                   variant="outline"
@@ -334,6 +346,7 @@ export default function Home() {
                     setFinalCode(e.target.value)
                     setRangeResult(null);
                   }}
+                  maxLength={10}
                 />
                 <Button
                   variant="outline"
