@@ -350,7 +350,7 @@ export default function Home() {
 
   const generateNewReport = () => {
     setCategoryTotals({ A: 0, B: 0, C: 0 });
-    setCodePairs({ A: [], B: [], C: [] });
+    setCodePairs({ A: 0, B: 0, C: 0 });
     setSelectedAgency(null);
     setInitialCode("");
     setFinalCode("");
@@ -494,10 +494,9 @@ export default function Home() {
       <div className="flex flex-col min-h-screen w-full bg-background">
         <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
             <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
-                <Aperture className="h-6 w-6"/>
-                <Menubar>
+                <Menubar className="border-none p-0">
                     <MenubarMenu>
-                        <MenubarTrigger>Relatórios</MenubarTrigger>
+                        <MenubarTrigger className="focus:bg-background data-[state=open]:bg-background">Relatórios</MenubarTrigger>
                         <MenubarContent>
                             <MenubarItem onClick={generateNewReport}>Gerar Novo Relatório</MenubarItem>
                             <MenubarItem onClick={() => setIsReportsDialogOpen(true)}>Ver Relatórios Salvos</MenubarItem>
@@ -1000,3 +999,4 @@ export default function Home() {
     </>
   );
 }
+
