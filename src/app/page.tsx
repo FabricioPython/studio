@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Barcode, Moon, Sun, Trash2, Share2, Aperture, Search, Copy } from "lucide-react";
+import { Barcode, Moon, Sun, Trash2, Share2, Aperture, Search, Copy, LogOut } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -53,6 +53,9 @@ import {
   } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import html2canvas from "html2canvas";
+import { useAuth } from "@/context/AuthContext";
+import { useRouter } from "next/navigation";
+import { signOutUser } from "@/firebase/auth";
 
 
 type CategoryTotals = { A: number; B: number; C: number };
@@ -96,6 +99,15 @@ export default function Home() {
   const [searchResult, setSearchResult] = useState<string | null>(null);
   const [isReservaFacilDialogOpen, setIsReservaFacilDialogOpen] = useState(false);
   const [reservaFacilSelectedReportId, setReservaFacilSelectedReportId] = useState<string | null>(null);
+
+  const { user, loading } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!loading && !user) {
+      router.push('/login');
+    }
+  }, [user, loading, router]);
 
 
   useEffect(() => {
@@ -490,6 +502,21 @@ export default function Home() {
     ? [...selectedReservaFacilReport.codePairs.A, ...selectedReservaFacilReport.codePairs.B, ...selectedReservaFacilReport.codePairs.C]
     : [];
 
+    const handleLogout = async () => {
+      await signOutUser();
+      router.push('/login');
+    };
+
+    if (loading || !user) {
+        return (
+          <div className="flex items-center justify-center min-h-screen bg-background">
+            <div className="flex flex-col items-center">
+              <Aperture className="h-12 w-12 animate-spin text-primary mb-4" />
+              <p className="text-lg text-muted-foreground">Loading...</p>
+            </div>
+          </div>
+        );
+      }
 
   return (
     <>
@@ -504,6 +531,11 @@ export default function Home() {
                     <MenubarItem onClick={openReservaFacilDialog}>Reserva Fácil</MenubarItem>
                     <MenubarSeparator />
                     <MenubarItem onClick={handleThemeChange}>Alternar Tema</MenubarItem>
+                    <MenubarSeparator />
+                    <MenubarItem onClick={handleLogout}>
+                        <LogOut className="mr-2 h-4 w-4" />
+                        Sair
+                    </MenubarItem>
                 </MenubarContent>
             </MenubarMenu>
         </Menubar>
@@ -1001,5 +1033,3 @@ export default function Home() {
     </>
   );
 }
-
-    
