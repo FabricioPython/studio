@@ -1,7 +1,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster"
-import { AuthContextProvider } from '@/context/AuthContext';
 
 export const metadata: Metadata = {
   title: 'CountSKP',
@@ -28,9 +27,7 @@ export default function RootLayout({
         ></link>
       </head>
       <body className="font-body antialiased">
-        <AuthContextProvider>
           {children}
-        </AuthContextProvider>
         <Toaster />
         </body>
     </html>

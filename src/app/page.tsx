@@ -53,9 +53,6 @@ import {
   } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import html2canvas from "html2canvas";
-import { useAuth } from "@/context/AuthContext";
-import { useRouter } from "next/navigation";
-import { signOutUser } from "@/firebase/auth";
 
 
 type CategoryTotals = { A: number; B: number; C: number };
@@ -99,16 +96,6 @@ export default function Home() {
   const [searchResult, setSearchResult] = useState<string | null>(null);
   const [isReservaFacilDialogOpen, setIsReservaFacilDialogOpen] = useState(false);
   const [reservaFacilSelectedReportId, setReservaFacilSelectedReportId] = useState<string | null>(null);
-
-  const { user, loading } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!loading && !user) {
-      router.push('/login');
-    }
-  }, [user, loading, router]);
-
 
   useEffect(() => {
     const savedTheme = localStorage.getItem("theme");
@@ -502,63 +489,43 @@ export default function Home() {
     ? [...selectedReservaFacilReport.codePairs.A, ...selectedReservaFacilReport.codePairs.B, ...selectedReservaFacilReport.codePairs.C]
     : [];
 
-    const handleLogout = async () => {
-      await signOutUser();
-      router.push('/login');
-    };
-
-    if (loading || !user) {
-        return (
-          <div className="flex items-center justify-center min-h-screen bg-background">
-            <div className="flex flex-col items-center">
-              <Aperture className="h-12 w-12 animate-spin text-primary mb-4" />
-              <p className="text-lg text-muted-foreground">Loading...</p>
-            </div>
-          </div>
-        );
-      }
-
   return (
     <>
       <div className="flex flex-col min-h-screen w-full bg-background">
-        <Menubar className="rounded-none border-b border-none px-2 lg:px-4">
-            <MenubarMenu>
-                <MenubarTrigger>Relatórios</MenubarTrigger>
-                <MenubarContent>
-                    <MenubarItem onClick={generateNewReport}>Gerar Novo Relatório</MenubarItem>
-                    <MenubarItem onClick={() => setIsReportsDialogOpen(true)}>Ver Relatórios Salvos</MenubarItem>
-                    <MenubarItem onClick={openConsultDialog}>Consultar SKP</MenubarItem>
-                    <MenubarItem onClick={openReservaFacilDialog}>Reserva Fácil</MenubarItem>
-                    <MenubarSeparator />
-                    <MenubarItem onClick={handleThemeChange}>Alternar Tema</MenubarItem>
-                    <MenubarSeparator />
-                    <MenubarItem onClick={handleLogout}>
-                        <LogOut className="mr-2 h-4 w-4" />
-                        Sair
-                    </MenubarItem>
-                </MenubarContent>
-            </MenubarMenu>
-        </Menubar>
+        <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background px-4 md:px-6">
+            <nav className="hidden flex-col gap-6 text-lg font-medium md:flex md:flex-row md:items-center md:gap-5 md:text-sm lg:gap-6">
+                <Aperture className="h-6 w-6"/>
+                <Menubar>
+                    <MenubarMenu>
+                        <MenubarTrigger>Relatórios</MenubarTrigger>
+                        <MenubarContent>
+                            <MenubarItem onClick={generateNewReport}>Gerar Novo Relatório</MenubarItem>
+                            <MenubarItem onClick={() => setIsReportsDialogOpen(true)}>Ver Relatórios Salvos</MenubarItem>
+                            <MenubarItem onClick={openConsultDialog}>Consultar SKP</MenubarItem>
+                            <MenubarItem onClick={openReservaFacilDialog}>Reserva Fácil</MenubarItem>
+                        </MenubarContent>
+                    </MenubarMenu>
+                </Menubar>
+            </nav>
+            <div className="flex w-full items-center gap-4 md:ml-auto md:gap-2 lg:gap-4">
+            <div className="ml-auto flex-1 sm:flex-initial">
+            </div>
+            <Button variant="ghost" size="icon" onClick={handleThemeChange}>
+                <Sun className="h-[1.2rem] w-[1.2rem] rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
+                <Moon className="absolute h-[1.2rem] w-[1.2rem] rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
+                <span className="sr-only">Toggle theme</span>
+            </Button>
+            </div>
+        </header>
         <main className="flex flex-1 w-full flex-col items-center justify-center p-4 gap-4">
             <Card className="w-full max-w-md shadow-lg">
-            <CardHeader className="flex flex-row items-center justify-between">
-                <div>
-                    <CardTitle className="text-2xl font-bold tracking-tight">
-                    CountSKP
-                    </CardTitle>
-                    <CardDescription>
-                    Insira o código inicial e final manual ou usando a câmera.
-                    </CardDescription>
-                </div>
-                <div className="flex items-center gap-2">
-                    <Sun className="h-5 w-5" />
-                    <Switch
-                        checked={theme === "dark"}
-                        onCheckedChange={handleThemeChange}
-                        aria-label="Toggle dark mode"
-                    />
-                    <Moon className="h-5 w-5" />
-                </div>
+            <CardHeader>
+                <CardTitle className="text-2xl font-bold tracking-tight">
+                CountSKP
+                </CardTitle>
+                <CardDescription>
+                Insira o código inicial e final manual ou usando a câmera.
+                </CardDescription>
             </CardHeader>
             <CardContent className="grid gap-6">
                 <div className="grid gap-2">
