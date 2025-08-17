@@ -758,21 +758,21 @@ export default function Home() {
                                     <TableRow>
                                         <TableCell className="font-medium">A</TableCell>
                                         <TableCell>{report.categoryTotals.A}</TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-xs">
                                             {report.codePairs.A.map(p => `${p.initial} - ${p.final}`).join(', ')}
                                         </TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">B</TableCell>
                                         <TableCell>{report.categoryTotals.B}</TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-xs">
                                              {report.codePairs.B.map(p => `${p.initial} - ${p.final}`).join(', ')}
                                         </TableCell>
                                     </TableRow>
                                     <TableRow>
                                         <TableCell className="font-medium">C</TableCell>
                                         <TableCell>{report.categoryTotals.C}</TableCell>
-                                        <TableCell>
+                                        <TableCell className="text-xs">
                                              {report.codePairs.C.map(p => `${p.initial} - ${p.final}`).join(', ')}
                                         </TableCell>
                                     </TableRow>
