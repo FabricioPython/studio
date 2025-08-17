@@ -241,17 +241,22 @@ export default function Home() {
   };
 
   const handleCapture = (scannedCode: string) => {
+    let processedCode = scannedCode;
+    if (processedCode.toUpperCase().startsWith('T')) {
+      processedCode = processedCode.substring(1);
+    }
+    
     if (scanningFor === "initial") {
-      setInitialCode(scannedCode);
+      setInitialCode(processedCode);
     } else if (scanningFor === "final") {
-      setFinalCode(scannedCode);
+      setFinalCode(processedCode);
     } else if (scanningFor === "consult") {
-        setSkpToSearch(scannedCode);
+        setSkpToSearch(processedCode);
     }
     setIsCameraOpen(false);
     toast({
-      title: "Code Scanned",
-      description: `Code ${scannedCode} captured for ${scanningFor} field.`,
+      title: "Código Escaneado",
+      description: `Código ${processedCode} capturado para o campo ${scanningFor}.`,
     });
   };
 
