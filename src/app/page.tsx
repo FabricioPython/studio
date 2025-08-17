@@ -307,7 +307,7 @@ export default function Home() {
 
     toast({
         title: "Contagem Salva",
-        description: `${rangeResult} SKPs adicionados à categoria ${selectedCategory}.`,
+        description: `${rangeResult} SKPs adicionados ao tipo ${selectedCategory}.`,
     })
 
   }
@@ -406,7 +406,7 @@ export default function Home() {
                     <p className="text-3xl font-bold tracking-tight">{rangeResult}</p>
                 </div>
                 <div className="grid gap-2">
-                    <Label>Selecione a Categoria</Label>
+                    <Label>Selecione o Tipo</Label>
                     <RadioGroup 
                         className="flex items-center gap-4" 
                         value={selectedCategory || ""}
@@ -434,18 +434,18 @@ export default function Home() {
              <Separator />
             <div className="space-y-4">
                 <div className="space-y-2">
-                    <h3 className="font-medium">Totais por Categoria</h3>
+                    <h3 className="font-medium">Totais por Tipo</h3>
                     <div className="flex justify-between rounded-lg bg-muted p-3">
                         <div className="text-center">
-                            <p className="text-sm text-muted-foreground">Categoria A</p>
+                            <p className="text-sm text-muted-foreground">Tipo A</p>
                             <p className="text-2xl font-bold">{categoryTotals.A}</p>
                         </div>
                          <div className="text-center">
-                            <p className="text-sm text-muted-foreground">Categoria B</p>
+                            <p className="text-sm text-muted-foreground">Tipo B</p>
                             <p className="text-2xl font-bold">{categoryTotals.B}</p>
                         </div>
                          <div className="text-center">
-                            <p className="text-sm text-muted-foreground">Categoria C</p>
+                            <p className="text-sm text-muted-foreground">Tipo C</p>
                             <p className="text-2xl font-bold">{categoryTotals.C}</p>
                         </div>
                     </div>
@@ -454,7 +454,7 @@ export default function Home() {
                     <h3 className="font-medium">Relatório</h3>
                     <div className="flex justify-center rounded-lg bg-primary/10 p-4">
                         <div className="text-center">
-                            <p className="text-sm text-primary/80">Soma de todas as categorias</p>
+                            <p className="text-sm text-primary/80">Soma de todos os tipos</p>
                             <p className="text-4xl font-bold text-primary">{totalGeral}</p>
                         </div>
                     </div>
@@ -495,7 +495,7 @@ export default function Home() {
               </div>
               <Separator />
               <div>
-                 <p className="text-sm font-medium text-muted-foreground">Quantidades por Categoria</p>
+                 <p className="text-sm font-medium text-muted-foreground">Quantidades por Tipo</p>
                  <div className="flex justify-between mt-2">
                     <div className="text-center">
                         <p className="font-bold text-lg">A</p>
@@ -557,3 +557,5 @@ export default function Home() {
     </>
   );
 }
+
+    
