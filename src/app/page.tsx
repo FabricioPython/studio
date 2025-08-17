@@ -429,7 +429,7 @@ export default function Home() {
                         <RadioGroup 
                             className="flex items-center gap-4" 
                             value={selectedCategory || ""}
-                            onValueChange={setSelectedCategory}
+                            onValuechange={setSelectedCategory}
                         >
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="A" id="cat-a" />
@@ -493,9 +493,6 @@ export default function Home() {
                     </div>
                 </div>
             </CardContent>
-            <CardFooter>
-            
-            </CardFooter>
             </Card>
 
             {selectedAgency && (
@@ -536,6 +533,9 @@ export default function Home() {
                     <p className="text-2xl font-bold text-primary">{totalGeral}</p>
                 </div>
                 </CardContent>
+                <CardFooter>
+                  <Button className="w-full">Salvar</Button>
+                </CardFooter>
             </Card>
             )}
         </main>
