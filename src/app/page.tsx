@@ -469,18 +469,18 @@ export default function Home() {
     setIsReservaFacilDialogOpen(true);
   }
 
-  const handleCopyToClipboard = (text: string) => {
+  const handleCopyToClipboard = (text: string, type: 'Inicial' | 'Final') => {
     navigator.clipboard.writeText(text).then(() => {
         toast({
             title: "Copiado!",
-            description: "Sequência copiada para a área de transferência."
+            description: `Código ${type} copiado para a área de transferência.`
         })
     }).catch(err => {
         console.error("Failed to copy text: ", err);
         toast({
             variant: "destructive",
             title: "Erro ao copiar",
-            description: "Não foi possível copiar a sequência."
+            description: "Não foi possível copiar o código."
         })
     })
   }
@@ -944,26 +944,39 @@ export default function Home() {
                      <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Sequência</TableHead>
+                                <TableHead>Tipo</TableHead>
+                                <TableHead>Código</TableHead>
                                 <TableHead className="text-right">Ação</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {allCodePairsFromSelectedReport.length > 0 ? allCodePairsFromSelectedReport.map((pair, index) => {
-                                const sequenceText = `${pair.initial} - ${pair.final}`;
-                                return (
-                                <TableRow key={index}>
-                                    <TableCell className="font-mono">{sequenceText}</TableCell>
+                            {allCodePairsFromSelectedReport.length > 0 ? allCodePairsFromSelectedReport.flatMap((pair, index) => ([
+                                <TableRow key={`${index}-initial`}>
+                                    <TableCell className="font-medium">Inicial</TableCell>
+                                    <TableCell className="font-mono">{pair.initial}</TableCell>
                                     <TableCell className="text-right">
-                                        <Button variant="ghost" size="icon" onClick={() => handleCopyToClipboard(sequenceText)}>
+                                        <Button variant="ghost" size="icon" onClick={() => handleCopyToClipboard(pair.initial, 'Inicial')}>
                                             <Copy className="h-4 w-4" />
                                         </Button>
                                     </TableCell>
+                                </TableRow>,
+                                <TableRow key={`${index}-final`}>
+                                     <TableCell className="font-medium">Final</TableCell>
+                                     <TableCell className="font-mono">{pair.final}</TableCell>
+                                     <TableCell className="text-right">
+                                         <Button variant="ghost" size="icon" onClick={() => handleCopyToClipboard(pair.final, 'Final')}>
+                                             <Copy className="h-4 w-4" />
+                                         </Button>
+                                     </TableCell>
+                                </TableRow>,
+                                <TableRow key={`${index}-separator`}>
+                                    <TableCell colSpan={3} className="p-0">
+                                        <Separator />
+                                    </TableCell>
                                 </TableRow>
-                                )
-                            }) : (
+                            ])) : (
                                 <TableRow>
-                                    <TableCell colSpan={2} className="text-center text-muted-foreground">
+                                    <TableCell colSpan={3} className="text-center text-muted-foreground">
                                         Nenhuma sequência neste relatório.
                                     </TableCell>
                                 </TableRow>
@@ -988,3 +1001,5 @@ export default function Home() {
     </>
   );
 }
+
+    
