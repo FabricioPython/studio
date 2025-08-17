@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Barcode, Moon, Sun } from "lucide-react";
+import { Barcode, Moon, Sun, Trash2, Eye } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -21,6 +21,7 @@ import {
   DialogTitle,
   DialogFooter,
   DialogClose,
+  DialogDescription,
 } from "@/components/ui/dialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
@@ -40,10 +41,28 @@ import {
     MenubarItem,
     MenubarMenu,
     MenubarSeparator,
-    MenubarShortcut,
     MenubarTrigger,
-  } from "@/components/ui/menubar"
+  } from "@/components/ui/menubar";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+  } from "@/components/ui/table";
+import { Badge } from "@/components/ui/badge";
 
+type CategoryTotals = { A: number; B: number; C: number };
+type CodePairs = { A: {initial: string, final: string}[], B: {initial: string, final: string}[], C: {initial: string, final: string}[] };
+type Report = {
+    id: string;
+    agency: string;
+    date: string;
+    categoryTotals: CategoryTotals;
+    totalGeral: number;
+    codePairs: CodePairs;
+};
 
 export default function Home() {
   const [initialCode, setInitialCode] = useState("");
@@ -57,9 +76,12 @@ export default function Home() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const streamRef = useRef<MediaStream | null>(null);
   const { toast } = useToast();
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
-  const [categoryTotals, setCategoryTotals] = useState({ A: 0, B: 0, C: 0 });
+  const [selectedCategory, setSelectedCategory] = useState<keyof CategoryTotals | null>(null);
+  const [categoryTotals, setCategoryTotals] = useState<CategoryTotals>({ A: 0, B: 0, C: 0 });
+  const [codePairs, setCodePairs] = useState<CodePairs>({ A: [], B: [], C: [] });
   const [selectedAgency, setSelectedAgency] = useState<string | null>(null);
+  const [savedReports, setSavedReports] = useState<Report[]>([]);
+  const [isReportsDialogOpen, setIsReportsDialogOpen] = useState(false);
   
   const agencies = [
     "174 NITEROI", "175 ICARAI", "176 BARRA MANSA", "177 BARRA DO PIRAI", "178 BOM JESUS DO ITABAPOANA",
@@ -163,6 +185,10 @@ export default function Home() {
 
   useEffect(() => {
     setCurrentDate(new Date().toLocaleDateString('pt-BR'));
+    const storedReports = localStorage.getItem('savedReports');
+    if (storedReports) {
+        setSavedReports(JSON.parse(storedReports));
+    }
   }, []);
 
   useEffect(() => {
@@ -306,8 +332,14 @@ export default function Home() {
 
     setCategoryTotals(prevTotals => ({
         ...prevTotals,
-        [selectedCategory]: prevTotals[selectedCategory as keyof typeof prevTotals] + rangeResult
+        [selectedCategory]: prevTotals[selectedCategory] + rangeResult
     }));
+
+    setCodePairs(prevPairs => ({
+        ...prevPairs,
+        [selectedCategory]: [...prevPairs[selectedCategory], { initial: initialCode, final: finalCode }]
+    }));
+
 
     setInitialCode("");
     setFinalCode("");
@@ -327,6 +359,68 @@ export default function Home() {
     setTheme(theme === "light" ? "dark" : "light");
   };
 
+  const handleSaveReport = () => {
+    if (!selectedAgency) {
+      toast({
+        variant: "destructive",
+        title: "Agência não selecionada",
+        description: "Por favor, selecione uma agência para salvar o relatório.",
+      });
+      return;
+    }
+
+    const newReport: Report = {
+      id: new Date().toISOString(),
+      agency: selectedAgency,
+      date: currentDate,
+      categoryTotals,
+      totalGeral,
+      codePairs,
+    };
+
+    const updatedReports = [...savedReports, newReport];
+    setSavedReports(updatedReports);
+    localStorage.setItem('savedReports', JSON.stringify(updatedReports));
+
+    toast({
+      title: "Relatório Salvo",
+      description: `Relatório para ${selectedAgency} foi salvo com sucesso.`,
+    });
+
+    // Reset fields
+    setCategoryTotals({ A: 0, B: 0, C: 0 });
+    setCodePairs({ A: [], B: [], C: [] });
+    setSelectedAgency(null);
+    setInitialCode("");
+    setFinalCode("");
+    setRangeResult(null);
+    setSelectedCategory(null);
+  };
+
+  const clearAllReports = () => {
+    setSavedReports([]);
+    localStorage.removeItem('savedReports');
+    toast({
+        title: "Relatórios Excluídos",
+        description: "Todos os relatórios salvos foram excluídos.",
+    });
+  }
+
+  const generateNewReport = () => {
+    setCategoryTotals({ A: 0, B: 0, C: 0 });
+    setCodePairs({ A: [], B: [], C: [] });
+    setSelectedAgency(null);
+    setInitialCode("");
+    setFinalCode("");
+    setRangeResult(null);
+    setSelectedCategory(null);
+    toast({
+        title: "Novo Relatório",
+        description: "Campos limpos para um novo relatório.",
+    });
+  }
+
+
   return (
     <>
       <div className="flex flex-col min-h-screen w-full bg-background">
@@ -334,7 +428,9 @@ export default function Home() {
             <MenubarMenu>
                 <MenubarTrigger>Relatórios</MenubarTrigger>
                 <MenubarContent>
-                    <MenubarItem>Gerar Relatório</MenubarItem>
+                    <MenubarItem onClick={generateNewReport}>Gerar Novo Relatório</MenubarItem>
+                    <MenubarItem onClick={() => setIsReportsDialogOpen(true)}>Ver Relatórios Salvos</MenubarItem>
+                    <MenubarSeparator />
                     <MenubarItem onClick={handleThemeChange}>Alternar Tema</MenubarItem>
                 </MenubarContent>
             </MenubarMenu>
@@ -429,7 +525,7 @@ export default function Home() {
                         <RadioGroup 
                             className="flex items-center gap-4" 
                             value={selectedCategory || ""}
-                            onValuechange={setSelectedCategory}
+                            onValueChange={(value) => setSelectedCategory(value as keyof CategoryTotals)}
                         >
                             <div className="flex items-center space-x-2">
                                 <RadioGroupItem value="A" id="cat-a" />
@@ -534,7 +630,7 @@ export default function Home() {
                 </div>
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full">Salvar</Button>
+                  <Button className="w-full" onClick={handleSaveReport}>Salvar</Button>
                 </CardFooter>
             </Card>
             )}
@@ -574,6 +670,86 @@ export default function Home() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+      
+      <Dialog open={isReportsDialogOpen} onOpenChange={setIsReportsDialogOpen}>
+        <DialogContent className="max-w-4xl h-[90vh] flex flex-col">
+            <DialogHeader>
+                <DialogTitle>Relatórios Salvos</DialogTitle>
+                <DialogDescription>
+                    Aqui estão todos os relatórios que você salvou.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="flex-1 overflow-y-auto pr-4">
+                {savedReports.length > 0 ? (
+                <div className="space-y-4">
+                    {savedReports.map((report) => (
+                    <Card key={report.id}>
+                        <CardHeader>
+                            <CardTitle className="flex justify-between items-center">
+                                <span>{report.agency}</span>
+                                <Badge variant="secondary">{report.date}</Badge>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead>Tipo</TableHead>
+                                        <TableHead>Quantidade</TableHead>
+                                        <TableHead>Pares de Códigos</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    <TableRow>
+                                        <TableCell className="font-medium">A</TableCell>
+                                        <TableCell>{report.categoryTotals.A}</TableCell>
+                                        <TableCell>
+                                            {report.codePairs.A.map(p => `${p.initial} - ${p.final}`).join(', ')}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">B</TableCell>
+                                        <TableCell>{report.categoryTotals.B}</TableCell>
+                                        <TableCell>
+                                             {report.codePairs.B.map(p => `${p.initial} - ${p.final}`).join(', ')}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow>
+                                        <TableCell className="font-medium">C</TableCell>
+                                        <TableCell>{report.categoryTotals.C}</TableCell>
+                                        <TableCell>
+                                             {report.codePairs.C.map(p => `${p.initial} - ${p.final}`).join(', ')}
+                                        </TableCell>
+                                    </TableRow>
+                                    <TableRow className="bg-muted/50 font-bold">
+                                        <TableCell>Total Geral</TableCell>
+                                        <TableCell colSpan={2}>{report.totalGeral}</TableCell>
+                                    </TableRow>
+                                </TableBody>
+                            </Table>
+                        </CardContent>
+                    </Card>
+                    ))}
+                </div>
+                ) : (
+                <p className="text-muted-foreground text-center py-8">Nenhum relatório salvo ainda.</p>
+                )}
+            </div>
+            <DialogFooter className="mt-4 gap-2 sm:justify-between">
+                {savedReports.length > 0 && (
+                    <Button variant="destructive" onClick={clearAllReports}>
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Excluir Todos
+                    </Button>
+                )}
+                <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                        Fechar
+                    </Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+    </Dialog>
     </>
   );
 }
