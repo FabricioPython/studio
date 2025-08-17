@@ -34,6 +34,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
+import {
+    Menubar,
+    MenubarContent,
+    MenubarItem,
+    MenubarMenu,
+    MenubarSeparator,
+    MenubarShortcut,
+    MenubarTrigger,
+  } from "@/components/ui/menubar"
 
 
 export default function Home() {
@@ -320,206 +329,233 @@ export default function Home() {
 
   return (
     <>
-      <main className="flex min-h-screen w-full flex-col items-center justify-center bg-background p-4 gap-4">
-        <Card className="w-full max-w-md shadow-lg">
-          <CardHeader className="flex flex-row items-center justify-between">
-            <div>
-                <CardTitle className="text-2xl font-bold tracking-tight">
-                CountSKP
-                </CardTitle>
-                <CardDescription>
-                Insira o código inicial e final manual ou usando a câmera.
-                </CardDescription>
-            </div>
-            <div className="flex items-center gap-2">
-                <Sun className="h-5 w-5" />
-                <Switch
-                    checked={theme === "dark"}
-                    onCheckedChange={handleThemeChange}
-                    aria-label="Toggle dark mode"
-                />
-                <Moon className="h-5 w-5" />
-            </div>
-          </CardHeader>
-          <CardContent className="grid gap-6">
-            <div className="grid gap-2">
-              <Label htmlFor="initial-code">Código Inicial</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="initial-code"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Digite ou escaneie o código"
-                  className="flex-1"
-                  value={initialCode}
-                  onChange={(e) => {
-                    setInitialCode(e.target.value)
-                    setRangeResult(null);
-                  }}
-                  maxLength={10}
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleScan("initial")}
-                  aria-label="Escanear código inicial"
-                >
-                  <Barcode className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-            <div className="grid gap-2">
-              <Label htmlFor="final-code">Código Final</Label>
-              <div className="flex items-center gap-2">
-                <Input
-                  id="final-code"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder="Digite ou escaneie o código"
-                  className="flex-1"
-                  value={finalCode}
-                  onChange={(e) => {
-                    setFinalCode(e.target.value)
-                    setRangeResult(null);
-                  }}
-                  maxLength={10}
-                />
-                <Button
-                  variant="outline"
-                  size="icon"
-                  onClick={() => handleScan("final")}
-                  aria-label="Escanear código final"
-                >
-                  <Barcode className="h-5 w-5" />
-                </Button>
-              </div>
-            </div>
-            {rangeResult === null && (
-                 <Button className="w-full" onClick={handleProcess}>
-                    Processar Códigos
-                </Button>
-            )}
-            {rangeResult !== null && (
-              <div className="space-y-4">
-                <div className="p-4 bg-muted rounded-lg text-center">
-                    <p className="text-sm text-muted-foreground">SKPs na sequência</p>
-                    <p className="text-3xl font-bold tracking-tight">{rangeResult}</p>
+      <div className="flex flex-col min-h-screen w-full bg-background">
+        <Menubar className="rounded-none border-b border-none px-2 lg:px-4">
+            <MenubarMenu>
+                <MenubarTrigger>Arquivo</MenubarTrigger>
+                <MenubarContent>
+                <MenubarItem>Novo</MenubarItem>
+                <MenubarItem>Abrir</MenubarItem>
+                <MenubarSeparator />
+                <MenubarItem>Salvar</MenubarItem>
+                <MenubarItem>Salvar Como...</MenubarItem>
+                </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+                <MenubarTrigger>Editar</MenubarTrigger>
+                <MenubarContent>
+                <MenubarItem>Desfazer</MenubarItem>
+                <MenubarItem>Refazer</MenubarItem>
+                </MenubarContent>
+            </MenubarMenu>
+            <MenubarMenu>
+                <MenubarTrigger>Visualizar</MenubarTrigger>
+                <MenubarContent>
+                <MenubarItem onClick={handleThemeChange}>Alternar Tema</MenubarItem>
+                </MenubarContent>
+            </MenubarMenu>
+        </Menubar>
+        <main className="flex flex-1 w-full flex-col items-center justify-center p-4 gap-4">
+            <Card className="w-full max-w-md shadow-lg">
+            <CardHeader className="flex flex-row items-center justify-between">
+                <div>
+                    <CardTitle className="text-2xl font-bold tracking-tight">
+                    CountSKP
+                    </CardTitle>
+                    <CardDescription>
+                    Insira o código inicial e final manual ou usando a câmera.
+                    </CardDescription>
+                </div>
+                <div className="flex items-center gap-2">
+                    <Sun className="h-5 w-5" />
+                    <Switch
+                        checked={theme === "dark"}
+                        onCheckedChange={handleThemeChange}
+                        aria-label="Toggle dark mode"
+                    />
+                    <Moon className="h-5 w-5" />
+                </div>
+            </CardHeader>
+            <CardContent className="grid gap-6">
+                <div className="grid gap-2">
+                <Label htmlFor="initial-code">Código Inicial</Label>
+                <div className="flex items-center gap-2">
+                    <Input
+                    id="initial-code"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Digite ou escaneie o código"
+                    className="flex-1"
+                    value={initialCode}
+                    onChange={(e) => {
+                        setInitialCode(e.target.value)
+                        setRangeResult(null);
+                    }}
+                    maxLength={10}
+                    />
+                    <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleScan("initial")}
+                    aria-label="Escanear código inicial"
+                    >
+                    <Barcode className="h-5 w-5" />
+                    </Button>
+                </div>
                 </div>
                 <div className="grid gap-2">
-                    <Label>Selecione o Tipo</Label>
-                    <RadioGroup 
-                        className="flex items-center gap-4" 
-                        value={selectedCategory || ""}
-                        onValueChange={setSelectedCategory}
+                <Label htmlFor="final-code">Código Final</Label>
+                <div className="flex items-center gap-2">
+                    <Input
+                    id="final-code"
+                    type="text"
+                    inputMode="numeric"
+                    placeholder="Digite ou escaneie o código"
+                    className="flex-1"
+                    value={finalCode}
+                    onChange={(e) => {
+                        setFinalCode(e.target.value)
+                        setRangeResult(null);
+                    }}
+                    maxLength={10}
+                    />
+                    <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={() => handleScan("final")}
+                    aria-label="Escanear código final"
                     >
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="A" id="cat-a" />
-                            <Label htmlFor="cat-a">A</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="B" id="cat-b" />
-                            <Label htmlFor="cat-b">B</Label>
-                        </div>
-                        <div className="flex items-center space-x-2">
-                            <RadioGroupItem value="C" id="cat-c" />
-                            <Label htmlFor="cat-c">C</Label>
-                        </div>
-                    </RadioGroup>
+                    <Barcode className="h-5 w-5" />
+                    </Button>
                 </div>
-                <Button className="w-full" onClick={handleSaveCount}>
-                    Salvar Contagem
-                </Button>
-              </div>
-            )}
-             <Separator />
-            <div className="space-y-4">
-                <div className="space-y-2">
-                    <h3 className="font-medium">Totais por Tipo</h3>
-                    <div className="flex justify-between rounded-lg bg-muted p-3">
-                        <div className="text-center">
-                            <p className="text-sm text-muted-foreground">Tipo A</p>
-                            <p className="text-2xl font-bold">{categoryTotals.A}</p>
+                </div>
+                {rangeResult === null && (
+                    <Button className="w-full" onClick={handleProcess}>
+                        Processar Códigos
+                    </Button>
+                )}
+                {rangeResult !== null && (
+                <div className="space-y-4">
+                    <div className="p-4 bg-muted rounded-lg text-center">
+                        <p className="text-sm text-muted-foreground">SKPs na sequência</p>
+                        <p className="text-3xl font-bold tracking-tight">{rangeResult}</p>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label>Selecione o Tipo</Label>
+                        <RadioGroup 
+                            className="flex items-center gap-4" 
+                            value={selectedCategory || ""}
+                            onValueChange={setSelectedCategory}
+                        >
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="A" id="cat-a" />
+                                <Label htmlFor="cat-a">Tipo A</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="B" id="cat-b" />
+                                <Label htmlFor="cat-b">Tipo B</Label>
+                            </div>
+                            <div className="flex items-center space-x-2">
+                                <RadioGroupItem value="C" id="cat-c" />
+                                <Label htmlFor="cat-c">Tipo C</Label>
+                            </div>
+                        </RadioGroup>
+                    </div>
+                    <Button className="w-full" onClick={handleSaveCount}>
+                        Salvar Contagem
+                    </Button>
+                </div>
+                )}
+                <Separator />
+                <div className="space-y-4">
+                    <div className="space-y-2">
+                        <h3 className="font-medium">Totais por Tipo</h3>
+                        <div className="flex justify-between rounded-lg bg-muted p-3">
+                            <div className="text-center">
+                                <p className="text-sm text-muted-foreground">Tipo A</p>
+                                <p className="text-2xl font-bold">{categoryTotals.A}</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-sm text-muted-foreground">Tipo B</p>
+                                <p className="text-2xl font-bold">{categoryTotals.B}</p>
+                            </div>
+                            <div className="text-center">
+                                <p className="text-sm text-muted-foreground">Tipo C</p>
+                                <p className="text-2xl font-bold">{categoryTotals.C}</p>
+                            </div>
                         </div>
-                         <div className="text-center">
-                            <p className="text-sm text-muted-foreground">Tipo B</p>
-                            <p className="text-2xl font-bold">{categoryTotals.B}</p>
+                    </div>
+                    <div className="space-y-2">
+                        <h3 className="font-medium">Relatório</h3>
+                        <div className="flex justify-center rounded-lg bg-primary/10 p-4">
+                            <div className="text-center">
+                                <p className="text-sm text-primary/80">Soma de todos os tipos</p>
+                                <p className="text-4xl font-bold text-primary">{totalGeral}</p>
+                            </div>
                         </div>
-                         <div className="text-center">
-                            <p className="text-sm text-muted-foreground">Tipo C</p>
-                            <p className="text-2xl font-bold">{categoryTotals.C}</p>
-                        </div>
+                    </div>
+                    <div className="grid gap-2">
+                        <Label htmlFor="agency-select">Agencia</Label>
+                        <Select onValueChange={setSelectedAgency} value={selectedAgency || ""}>
+                            <SelectTrigger id="agency-select">
+                                <SelectValue placeholder="Selecione a agência" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {agencies.map((agency) => (
+                                    <SelectItem key={agency} value={agency}>{agency}</SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
                     </div>
                 </div>
-                 <div className="space-y-2">
-                    <h3 className="font-medium">Relatório</h3>
-                    <div className="flex justify-center rounded-lg bg-primary/10 p-4">
-                        <div className="text-center">
-                            <p className="text-sm text-primary/80">Soma de todos os tipos</p>
-                            <p className="text-4xl font-bold text-primary">{totalGeral}</p>
-                        </div>
-                    </div>
-                </div>
-                 <div className="grid gap-2">
-                    <Label htmlFor="agency-select">Agencia</Label>
-                    <Select onValueChange={setSelectedAgency} value={selectedAgency || ""}>
-                        <SelectTrigger id="agency-select">
-                            <SelectValue placeholder="Selecione a agência" />
-                        </SelectTrigger>
-                        <SelectContent>
-                            {agencies.map((agency) => (
-                                <SelectItem key={agency} value={agency}>{agency}</SelectItem>
-                            ))}
-                        </SelectContent>
-                    </Select>
-                 </div>
-            </div>
-          </CardContent>
-          <CardFooter>
-           
-          </CardFooter>
-        </Card>
-
-        {selectedAgency && (
-          <Card className="w-full max-w-md shadow-lg">
-            <CardHeader>
-              <CardTitle>Relatório Final</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Agência</p>
-                <p className="font-semibold">{selectedAgency}</p>
-              </div>
-              <div>
-                <p className="text-sm font-medium text-muted-foreground">Data</p>
-                <p className="font-semibold">{currentDate}</p>
-              </div>
-              <Separator />
-              <div>
-                 <p className="text-sm font-medium text-muted-foreground">Quantidades por Tipo</p>
-                 <div className="flex justify-between mt-2">
-                    <div className="text-center">
-                        <p className="font-bold text-lg">A</p>
-                        <p>{categoryTotals.A}</p>
-                    </div>
-                     <div className="text-center">
-                        <p className="font-bold text-lg">B</p>
-                        <p>{categoryTotals.B}</p>
-                    </div>
-                     <div className="text-center">
-                        <p className="font-bold text-lg">C</p>
-                        <p>{categoryTotals.C}</p>
-                    </div>
-                 </div>
-              </div>
-              <Separator />
-              <div className="flex justify-between items-center">
-                <p className="text-lg font-bold">Somatório Geral</p>
-                <p className="text-2xl font-bold text-primary">{totalGeral}</p>
-              </div>
             </CardContent>
-          </Card>
-        )}
-      </main>
+            <CardFooter>
+            
+            </CardFooter>
+            </Card>
+
+            {selectedAgency && (
+            <Card className="w-full max-w-md shadow-lg">
+                <CardHeader>
+                <CardTitle>Relatório Final</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                <div>
+                    <p className="text-sm font-medium text-muted-foreground">Agência</p>
+                    <p className="font-semibold">{selectedAgency}</p>
+                </div>
+                <div>
+                    <p className="text-sm font-medium text-muted-foreground">Data</p>
+                    <p className="font-semibold">{currentDate}</p>
+                </div>
+                <Separator />
+                <div>
+                    <p className="text-sm font-medium text-muted-foreground">Quantidades por Tipo</p>
+                    <div className="flex justify-between mt-2">
+                        <div className="text-center">
+                            <p className="font-bold text-lg">A</p>
+                            <p>{categoryTotals.A}</p>
+                        </div>
+                        <div className="text-center">
+                            <p className="font-bold text-lg">B</p>
+                            <p>{categoryTotals.B}</p>
+                        </div>
+                        <div className="text-center">
+                            <p className="font-bold text-lg">C</p>
+                            <p>{categoryTotals.C}</p>
+                        </div>
+                    </div>
+                </div>
+                <Separator />
+                <div className="flex justify-between items-center">
+                    <p className="text-lg font-bold">Somatório Geral</p>
+                    <p className="text-2xl font-bold text-primary">{totalGeral}</p>
+                </div>
+                </CardContent>
+            </Card>
+            )}
+        </main>
+      </div>
 
       <Dialog open={isCameraOpen} onOpenChange={setIsCameraOpen}>
         <DialogContent className="sm:max-w-[425px]">
@@ -557,5 +593,3 @@ export default function Home() {
     </>
   );
 }
-
-    
