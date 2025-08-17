@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Aperture, Moon, Sun } from "lucide-react";
+import { Barcode, Moon, Sun } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -364,7 +364,7 @@ export default function Home() {
                   onClick={() => handleScan("initial")}
                   aria-label="Escanear código inicial"
                 >
-                  <Aperture className="h-5 w-5" />
+                  <Barcode className="h-5 w-5" />
                 </Button>
               </div>
             </div>
@@ -390,7 +390,7 @@ export default function Home() {
                   onClick={() => handleScan("final")}
                   aria-label="Escanear código final"
                 >
-                  <Aperture className="h-5 w-5" />
+                  <Barcode className="h-5 w-5" />
                 </Button>
               </div>
             </div>
