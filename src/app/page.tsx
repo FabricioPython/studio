@@ -332,26 +332,10 @@ export default function Home() {
       <div className="flex flex-col min-h-screen w-full bg-background">
         <Menubar className="rounded-none border-b border-none px-2 lg:px-4">
             <MenubarMenu>
-                <MenubarTrigger>Arquivo</MenubarTrigger>
+                <MenubarTrigger>Relatórios</MenubarTrigger>
                 <MenubarContent>
-                <MenubarItem>Novo</MenubarItem>
-                <MenubarItem>Abrir</MenubarItem>
-                <MenubarSeparator />
-                <MenubarItem>Salvar</MenubarItem>
-                <MenubarItem>Salvar Como...</MenubarItem>
-                </MenubarContent>
-            </MenubarMenu>
-            <MenubarMenu>
-                <MenubarTrigger>Editar</MenubarTrigger>
-                <MenubarContent>
-                <MenubarItem>Desfazer</MenubarItem>
-                <MenubarItem>Refazer</MenubarItem>
-                </MenubarContent>
-            </MenubarMenu>
-            <MenubarMenu>
-                <MenubarTrigger>Visualizar</MenubarTrigger>
-                <MenubarContent>
-                <MenubarItem onClick={handleThemeChange}>Alternar Tema</MenubarItem>
+                    <MenubarItem>Gerar Relatório</MenubarItem>
+                    <MenubarItem onClick={handleThemeChange}>Alternar Tema</MenubarItem>
                 </MenubarContent>
             </MenubarMenu>
         </Menubar>
@@ -593,3 +577,5 @@ export default function Home() {
     </>
   );
 }
+
+    
