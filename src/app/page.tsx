@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Barcode, Moon, Sun, Trash2, Eye } from "lucide-react";
+import { Barcode, Moon, Sun, Trash2, Share2 } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -52,6 +52,8 @@ import {
     TableRow,
   } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
+import html2canvas from "html2canvas";
+
 
 type CategoryTotals = { A: number; B: number; C: number };
 type CodePairs = { A: {initial: string, final: string}[], B: {initial: string, final: string}[], C: {initial: string, final: string}[] };
@@ -420,6 +422,54 @@ export default function Home() {
     });
   }
 
+  const handleShare = async (reportId: string) => {
+    const reportElement = document.getElementById(`report-card-${reportId}`);
+    if (!reportElement) {
+      toast({
+        variant: "destructive",
+        title: "Erro",
+        description: "Não foi possível encontrar o relatório para compartilhar.",
+      });
+      return;
+    }
+
+    try {
+      const canvas = await html2canvas(reportElement, {
+        useCORS: true,
+        scale: 2, // Higher scale for better quality
+        backgroundColor: theme === 'dark' ? '#134074' : '#eef4ed',
+      });
+      const dataUrl = canvas.toDataURL("image/png");
+      const blob = await (await fetch(dataUrl)).blob();
+      const file = new File([blob], "relatorio.png", { type: "image/png" });
+
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({
+          files: [file],
+          title: 'Relatório de SKPs',
+          text: `Segue o relatório de SKPs para a agência.`,
+        });
+      } else {
+        // Fallback for browsers that don't support sharing files
+        const link = document.createElement('a');
+        link.href = dataUrl;
+        link.download = 'relatorio.png';
+        link.click();
+        toast({
+            title: "Imagem Salva",
+            description: "A imagem do relatório foi baixada. Você pode compartilhá-la manualmente.",
+        })
+      }
+    } catch (error) {
+      console.error("Error generating or sharing image:", error);
+      toast({
+        variant: "destructive",
+        title: "Erro ao compartilhar",
+        description: "Não foi possível gerar ou compartilhar a imagem do relatório.",
+      });
+    }
+  };
+
 
   return (
     <>
@@ -683,11 +733,16 @@ export default function Home() {
                 {savedReports.length > 0 ? (
                 <div className="space-y-4">
                     {savedReports.map((report) => (
-                    <Card key={report.id}>
+                    <Card key={report.id} id={`report-card-${report.id}`}>
                         <CardHeader>
                             <CardTitle className="flex justify-between items-center">
                                 <span>{report.agency}</span>
+                                <div className="flex items-center gap-2">
                                 <Badge variant="secondary">{report.date}</Badge>
+                                <Button variant="ghost" size="icon" onClick={() => handleShare(report.id)}>
+                                    <Share2 className="h-4 w-4" />
+                                </Button>
+                                </div>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -753,5 +808,3 @@ export default function Home() {
     </>
   );
 }
-
-    
