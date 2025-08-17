@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Barcode, Moon, Sun, Trash2, Share2, Aperture, Search } from "lucide-react";
+import { Barcode, Moon, Sun, Trash2, Share2, Aperture, Search, Copy } from "lucide-react";
 import {
   Dialog,
   DialogContent,
@@ -56,7 +56,8 @@ import html2canvas from "html2canvas";
 
 
 type CategoryTotals = { A: number; B: number; C: number };
-type CodePairs = { A: {initial: string, final: string}[], B: {initial: string, final: string}[], C: {initial: string, final: string}[] };
+type CodePair = {initial: string, final: string};
+type CodePairs = { A: CodePair[], B: CodePair[], C: CodePair[] };
 type Report = {
     id: string;
     agency: string;
@@ -93,6 +94,8 @@ export default function Home() {
   const [consultSelectedReportId, setConsultSelectedReportId] = useState<string | null>(null);
   const [skpToSearch, setSkpToSearch] = useState("");
   const [searchResult, setSearchResult] = useState<string | null>(null);
+  const [isReservaFacilDialogOpen, setIsReservaFacilDialogOpen] = useState(false);
+  const [reservaFacilSelectedReportId, setReservaFacilSelectedReportId] = useState<string | null>(null);
 
 
   useEffect(() => {
@@ -461,6 +464,32 @@ export default function Home() {
     setIsConsultDialogOpen(true);
   }
 
+  const openReservaFacilDialog = () => {
+    setReservaFacilSelectedReportId(null);
+    setIsReservaFacilDialogOpen(true);
+  }
+
+  const handleCopyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text).then(() => {
+        toast({
+            title: "Copiado!",
+            description: "Sequência copiada para a área de transferência."
+        })
+    }).catch(err => {
+        console.error("Failed to copy text: ", err);
+        toast({
+            variant: "destructive",
+            title: "Erro ao copiar",
+            description: "Não foi possível copiar a sequência."
+        })
+    })
+  }
+
+  const selectedReservaFacilReport = savedReports.find(r => r.id === reservaFacilSelectedReportId);
+  const allCodePairsFromSelectedReport = selectedReservaFacilReport
+    ? [...selectedReservaFacilReport.codePairs.A, ...selectedReservaFacilReport.codePairs.B, ...selectedReservaFacilReport.codePairs.C]
+    : [];
+
 
   return (
     <>
@@ -472,6 +501,7 @@ export default function Home() {
                     <MenubarItem onClick={generateNewReport}>Gerar Novo Relatório</MenubarItem>
                     <MenubarItem onClick={() => setIsReportsDialogOpen(true)}>Ver Relatórios Salvos</MenubarItem>
                     <MenubarItem onClick={openConsultDialog}>Consultar SKP</MenubarItem>
+                    <MenubarItem onClick={openReservaFacilDialog}>Reserva Fácil</MenubarItem>
                     <MenubarSeparator />
                     <MenubarItem onClick={handleThemeChange}>Alternar Tema</MenubarItem>
                 </MenubarContent>
@@ -879,8 +909,82 @@ export default function Home() {
             </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      <Dialog open={isReservaFacilDialogOpen} onOpenChange={setIsReservaFacilDialogOpen}>
+        <DialogContent className="sm:max-w-2xl max-h-[90vh] flex flex-col">
+            <DialogHeader>
+                <DialogTitle>Reserva Fácil</DialogTitle>
+                <DialogDescription>
+                    Selecione um relatório para ver as sequências e copiá-las facilmente.
+                </DialogDescription>
+            </DialogHeader>
+            <div className="grid gap-4 py-4">
+                 <div className="grid gap-2">
+                    <Label htmlFor="reserva-report-select">Relatório</Label>
+                    <Select onValueChange={setReservaFacilSelectedReportId} value={reservaFacilSelectedReportId || ""}>
+                        <SelectTrigger id="reserva-report-select">
+                            <SelectValue placeholder="Selecione um relatório salvo" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {savedReports.length > 0 ? (
+                                savedReports.map((report) => (
+                                    <SelectItem key={report.id} value={report.id}>{report.agency} - {report.date}</SelectItem>
+                                ))
+                            ) : (
+                                <SelectItem value="no-reports" disabled>Nenhum relatório salvo</SelectItem>
+                            )}
+                        </SelectContent>
+                    </Select>
+                </div>
+            </div>
+
+            <div className="flex-1 overflow-y-auto pr-4 -mr-4">
+              {selectedReservaFacilReport ? (
+                 <div className="space-y-4">
+                     <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Sequência</TableHead>
+                                <TableHead className="text-right">Ação</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {allCodePairsFromSelectedReport.length > 0 ? allCodePairsFromSelectedReport.map((pair, index) => {
+                                const sequenceText = `${pair.initial} - ${pair.final}`;
+                                return (
+                                <TableRow key={index}>
+                                    <TableCell className="font-mono">{sequenceText}</TableCell>
+                                    <TableCell className="text-right">
+                                        <Button variant="ghost" size="icon" onClick={() => handleCopyToClipboard(sequenceText)}>
+                                            <Copy className="h-4 w-4" />
+                                        </Button>
+                                    </TableCell>
+                                </TableRow>
+                                )
+                            }) : (
+                                <TableRow>
+                                    <TableCell colSpan={2} className="text-center text-muted-foreground">
+                                        Nenhuma sequência neste relatório.
+                                    </TableCell>
+                                </TableRow>
+                            )}
+                        </TableBody>
+                    </Table>
+                 </div>
+              ) : (
+                <p className="text-muted-foreground text-center py-8">Selecione um relatório para começar.</p>
+              )}
+            </div>
+            
+            <DialogFooter className="mt-4">
+                <DialogClose asChild>
+                    <Button type="button" variant="secondary">
+                        Fechar
+                    </Button>
+                </DialogClose>
+            </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
-
-    
